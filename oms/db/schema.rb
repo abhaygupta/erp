@@ -11,11 +11,42 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120930120830) do
+ActiveRecord::Schema.define(:version => 20120930153505) do
+
+  create_table "order_sequences", :id => false, :force => true do |t|
+    t.string "seq_id", :limit => 100, :null => false
+  end
+
+  create_table "order_status_histories", :force => true do |t|
+    t.integer  "order_id",      :limit => 8,                           :null => false
+    t.datetime "status_time",                                          :null => false
+    t.string   "from_status",   :limit => 20
+    t.string   "to_status",     :limit => 20,                          :null => false
+    t.string   "event",         :limit => 100
+    t.string   "change_reason", :limit => 100
+    t.string   "comments",      :limit => 1000
+    t.string   "created_by",    :limit => 50,   :default => "website"
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
+  end
 
   create_table "orders", :force => true do |t|
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.string   "external_id",        :limit => 100,                                                       :null => false
+    t.string   "channel",            :limit => 20,                                 :default => "website"
+    t.string   "status",             :limit => 20,                                 :default => "created"
+    t.string   "currency",           :limit => 20,                                 :default => "INR"
+    t.decimal  "billing_amount",                     :precision => 2, :scale => 0, :default => 0
+    t.datetime "order_date",                                                                              :null => false
+    t.string   "customer_id",        :limit => 100,                                                       :null => false
+    t.string   "phone",              :limit => 100
+    t.string   "email_id",           :limit => 100
+    t.string   "pickup_address_id",  :limit => 100,                                                       :null => false
+    t.string   "drop_address_id",    :limit => 100,                                                       :null => false
+    t.string   "billing_address_id", :limit => 100,                                                       :null => false
+    t.string   "created_by",         :limit => 50,                                 :default => "website"
+    t.string   "comments",           :limit => 1000
+    t.datetime "created_at",                                                                              :null => false
+    t.datetime "updated_at",                                                                              :null => false
   end
 
 end

@@ -6,6 +6,14 @@ gem 'rails', '3.2.6'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem "activerecord", "~> 3.2.6"
+gem 'rest-client'
+gem 'state_machine'
+gem 'activeldap'
+gem 'net-ldap'
+gem "rack", "~> 1.4.1"
+# gem 'thrift', '0.9.0.1.patched'
+# gem 'rcov', '0.9.11'
+# gem 'acts-as-tree-with-dotted-ids'
 
 platforms :ruby do
   gem 'thin'

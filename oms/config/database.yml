@@ -1,6 +1,6 @@
 test:
   adapter: <%= RUBY_PLATFORM == 'java' ? 'mysql' : 'mysql2' %>
-  database: oms_test
+  database: oms_<%=Rails.env%>
   username: root
   password:
   host: localhost
@@ -9,7 +9,7 @@ test:
 
 development:
   adapter: <%= RUBY_PLATFORM == 'java' ? 'mysql' : 'mysql2' %>
-  database: oms_test
+  database: oms_<%=Rails.env%>
   username: root
   password:
   host: localhost
