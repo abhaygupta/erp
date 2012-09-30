@@ -24,4 +24,69 @@ class OrderTest < ActiveSupport::TestCase
 
     should have_many(:order_status_histories)
   end
+
+  context "should test state transition from created state" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'created')
+    end
+
+    should "test state transition from created state" do
+      assert @order.can_approve?
+      assert @order.can_cancel?
+      assert @order.can_hold?
+      assert_false @order.can_complete?
+    end
+  end
+
+  context "should test state transition from approved state" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'approved')
+    end
+
+    should "test state transition from approved state" do
+      assert @order.can_cancel?
+      assert @order.can_hold?
+      assert @order.can_complete?
+      assert_false @order.can_approve?
+    end
+  end
+
+  context "should test state transition from cancelled state" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'cancelled')
+    end
+
+    should "test state transition from cancelled state" do
+      assert_false @order.can_approve?
+      assert_false @order.can_hold?
+      assert_false @order.can_complete?
+      assert_false @order.can_cancel?
+    end
+  end
+
+  context "should test state transition from on_hold state" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'on_hold')
+    end
+
+    should "test state transition from on_hold state" do
+      assert @order.can_approve?
+      assert_false @order.can_hold?
+      assert_false @order.can_complete?
+      assert @order.can_cancel?
+    end
+  end
+
+  context "should test state transition from completed state" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'completed')
+    end
+
+    should "test state transition from completed state" do
+      assert_false @order.can_approve?
+      assert_false @order.can_hold?
+      assert_false @order.can_complete?
+      assert_false @order.can_cancel?
+    end
+  end
 end

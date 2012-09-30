@@ -28,7 +28,7 @@ class Order < ActiveRecord::Base
     end
 
     event :cancel do
-      transition [:created, :on_hold] => :cancelled
+      transition [:created, :on_hold, :approved] => :cancelled
     end
 
     event :complete do

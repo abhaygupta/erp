@@ -20,6 +20,7 @@ group :test, :ci do
   gem 'mocha'
   gem 'shoulda'
   gem 'shoulda-matchers'
+  gem 'factory_girl'
 end
 
 
