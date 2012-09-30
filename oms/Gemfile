@@ -5,8 +5,21 @@ gem 'rails', '3.2.6'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+gem "activerecord", "~> 3.2.8"
 
+platforms :ruby do
+  gem 'thin'
+  gem 'mysql2'
+  gem 'yajl-ruby', '1.1.0'
+end
+
+platforms :jruby do
+  gem 'activerecord-jdbcmysql-adapter'
+  gem 'jruby-openssl', '0.7.6.1.patched'
+  gem 'trinidad'
+  gem 'jruby-rack', '1.1.4'
+  gem 'json', '1.7.3'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
