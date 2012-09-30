@@ -20,7 +20,7 @@ class Order < ActiveRecord::Base
     before_transition do |order, transition|
       args = transition.args[0]
       args ||= {}
-      order.log_state_change(transition.from, transition.to, transition.event.to_s, args[:status_time], args[:change_reason], args[:comments])
+      order.log_state_change(transition.from, transition.to, transition.event.to_s, args[:status_time] || Time.new , args[:change_reason], args[:comments])
     end
 
     event :approve do
@@ -40,7 +40,7 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def log_state_change(from_status, to_status, event, status_time = Time.new, change_reason = nil, comments = nil)
+  def log_state_change(from_status, to_status, event, status_time= Time.now, change_reason = nil, comments = nil)
     order_status_histories.create!(order_id: self.id, status_time: status_time, from_status: from_status,
                                    to_status: to_status, event: event, change_reason: change_reason, comments: comments, created_by: 'website')
   end

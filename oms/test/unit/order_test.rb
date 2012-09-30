@@ -89,4 +89,24 @@ class OrderTest < ActiveSupport::TestCase
       assert_false @order.can_cancel?
     end
   end
+
+  context "should log state transitions" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'created')
+    end
+
+    should "test state transition logging" do
+      assert @order.created?
+      assert_equal 0, @order.order_status_histories.count
+      @order.approve!
+      assert @order.approved?
+      assert_equal 1, @order.order_status_histories.count
+      @order.hold!
+      assert @order.on_hold?
+      assert_equal 2, @order.order_status_histories.count
+      @order.cancel!
+      assert @order.cancelled?
+      assert_equal 3, @order.order_status_histories.count
+    end
+  end
 end
