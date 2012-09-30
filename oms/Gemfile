@@ -15,6 +15,14 @@ gem "rack", "~> 1.4.1"
 # gem 'rcov', '0.9.11'
 # gem 'acts-as-tree-with-dotted-ids'
 
+group :test, :ci do
+  gem 'test-unit'
+  gem 'mocha'
+  gem 'shoulda'
+  gem 'shoulda-matchers'
+end
+
+
 platforms :ruby do
   gem 'thin'
   gem 'mysql2'
@@ -32,7 +40,7 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
+  gem 'sass-rails', '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes

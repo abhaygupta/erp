@@ -9,4 +9,6 @@ class OrderStatusHistory < ActiveRecord::Base
   validates_length_of :created_by, :maximum => 50, :allow_nil => true, :allow_blank => true
   validates_length_of :event, :change_reason, :maximum => 100, :allow_nil => true, :allow_blank => true
   validates_length_of :comments, :maximum => 1000, :allow_nil => true, :allow_blank => true
+  validates_inclusion_of :to_status, :in => %w(created on_hold approved cancelled completed)
+  validates_inclusion_of :from_status, :in => %w(created on_hold approved cancelled completed), :allow_nil => true, :allow_blank => true
 end
