@@ -11,3 +11,7 @@
  *= require_self
  *= require_tree .
  */
+
+.table-border{
+    border: 1px solid #d2d9e7;
+}
