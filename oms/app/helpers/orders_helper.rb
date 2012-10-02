@@ -6,5 +6,4 @@ module OrdersHelper
     random_number = "%05d" % Order.connection.insert("insert into order_sequences values('" + prefix + "', null)")
     prefix + shift(random_number, 4).to_s
   end
-
 end
