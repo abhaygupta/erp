@@ -4,7 +4,7 @@ class OrderStatusHistoryTest < ActiveSupport::TestCase
 
   context "test order status history model validations" do
 
-    [:order_id, :status_time, :to_status].each { |column| should validate_presence_of(column) }
+    [:status_time, :to_status].each { |column| should validate_presence_of(column) }
     [:from_status, :to_status].each { |column| should ensure_length_of(column).is_at_most(20) }
     should ensure_length_of(:created_by).is_at_most(50)
     [:event, :change_reason].each { |column| should ensure_length_of(column).is_at_most(100) }

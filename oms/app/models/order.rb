@@ -3,7 +3,7 @@ class Order < ActiveRecord::Base
   has_many :order_status_histories, :dependent => :delete_all, :autosave => true
 
   attr_accessible :external_id, :channel, :status, :currency, :billing_amount, :order_date, :customer_id,
-                  :phone, :email_id, :address_id, :drop_address_id, :billing_address_id, :created_by, :comments
+                  :phone, :email_id, :address_id, :pickup_address_id, :drop_address_id, :billing_address_id, :created_by, :comments
 
   validates_presence_of :external_id, :order_date, :customer_id, :pickup_address_id, :drop_address_id, :billing_address_id
   validates_length_of :external_id, :customer_id, :phone, :email_id, :pickup_address_id, :drop_address_id, :billing_address_id, :maximum => 100
@@ -42,6 +42,6 @@ class Order < ActiveRecord::Base
 
   def log_state_change(from_status, to_status, event, status_time= Time.now, change_reason = nil, comments = nil)
     order_status_histories.create!(order_id: self.id, status_time: status_time, from_status: from_status,
-                                   to_status: to_status, event: event, change_reason: change_reason, comments: comments, created_by: 'website')
+                                   to_status: to_status, event: event, change_reason: change_reason, comments: comments, created_by: 'system')
   end
 end

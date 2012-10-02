@@ -21,6 +21,7 @@ group :test, :ci do
   gem 'shoulda'
   gem 'shoulda-matchers'
   gem 'factory_girl'
+  gem "rspec-rails", "~> 2.11.0"
 end
 
 
