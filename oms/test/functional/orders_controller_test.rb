@@ -2,10 +2,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../../test/test_helper.rb')
 
 class OrdersControllerTest < ActionController::TestCase
 
+  def setup
+    Order.delete_all
+    OrderStatusHistory.delete_all
+  end
+
   context "search order test" do
     setup do
-      Order.delete_all
-      OrderStatusHistory.delete_all
       @order = FactoryGirl.create :order
       get :index
     end
@@ -34,7 +37,28 @@ class OrdersControllerTest < ActionController::TestCase
       order = response_body["order"]
       assert_not_nil order
       assert_equal "/orders/#{order['id']}", @response.header["Location"]
-      assert_equal 1, OrderStatusHistory.where(:order_id=> order['id']).count
+      assert_equal 1, OrderStatusHistory.where(:order_id => order['id']).count
+    end
+  end
+
+  context "get order by id" do
+    setup do
+      post :create, FactoryGirl.attributes_for(:order)
+      assert_equal 201, @response.status
+      response_body = JSON.parse(@response.body)
+      @order = response_body["order"]
+    end
+
+    should "test search order by id success" do
+      get :show, @order
+      assert_equal 200, @response.status
+      response_body = JSON.parse(@response.body)
+      assert_not_nil response_body["order"]
+    end
+
+    should "test search order by id fails" do
+      get :show, {:id=>"0000000000"}
+      assert_equal 404, @response.status
     end
   end
 end

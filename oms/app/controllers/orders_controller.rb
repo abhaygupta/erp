@@ -25,8 +25,21 @@ class OrdersController < ApplicationController
   end
 
   def show
+    Rails.logger.info "Get order called with params : #{params}"
+
     @order = Order.find(params[:id])
     render :json => {:order => @order}.to_json, :status => 200
+  end
+
+  def new
+    Rails.logger.info "New order called with params : #{params}"
+    build_order(params)
+  end
+
+  def edit
+    Rails.logger.info "Edit order called with params : #{params}"
+    @order = Order.find(params[:id])
+
   end
 
 end
