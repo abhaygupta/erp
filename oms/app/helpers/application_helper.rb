@@ -1,7 +1,7 @@
 module ApplicationHelper
 
   def accept_params(params, fields)
-    h = { }
+    h = {}
     fields.each do |name|
       h[name] = params[name] if params[name]
     end
@@ -19,7 +19,15 @@ module ApplicationHelper
 
   def validate_presence_of(params, keys)
     keys.each do |key|
-      raise OMSError.new(:code=> :KEY_NOT_FOUND, :params=> {key => params[key]}, :message => "Please pass the param #{key}") if params[key].blank?
+      raise OMSError.new(:code => :KEY_NOT_FOUND, :params => {key => params[key]}, :message => "Please pass the param #{key}") if params[key].blank?
     end
+  end
+
+  def json_status(code, response)
+    render :json => response.to_json, :status => code
+  end
+
+  def json_response(code, response)
+    render :json => response, :status => code
   end
 end
