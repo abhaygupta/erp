@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121006084431) do
+ActiveRecord::Schema.define(:version => 20121006114610) do
 
   create_table "call_verifications", :force => true do |t|
     t.integer  "order_id",          :limit => 8,                        :null => false
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(:version => 20121006084431) do
     t.string   "created_by",        :limit => 50
     t.datetime "created_at",                                            :null => false
     t.datetime "updated_at",                                            :null => false
+  end
+
+  create_table "order_assocs", :force => true do |t|
+    t.integer  "from_order_id", :limit => 8,  :null => false
+    t.integer  "to_order_id",   :limit => 8,  :null => false
+    t.string   "assoc_type",    :limit => 20, :null => false
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
   end
 
   create_table "order_sequences", :id => false, :force => true do |t|

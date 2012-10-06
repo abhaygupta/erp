@@ -95,7 +95,7 @@ class CallVerificationTest < ActiveSupport::TestCase
       @verification.decline!
       assert @verification.reload.declined?
       assert @order.reload.cancelled?
-      assert_equal 1, order_status_histories.size
+      assert_equal 1, @order.order_status_histories.size
     end
 
     should "mark call verification as pending" do
@@ -104,7 +104,7 @@ class CallVerificationTest < ActiveSupport::TestCase
       @verification.pending!
       assert @verification.reload.pending?
       assert @order.reload.on_hold?
-      assert_equal 0, order_status_histories.size
+      assert_equal 0, @order.order_status_histories.size
     end
   end
 end

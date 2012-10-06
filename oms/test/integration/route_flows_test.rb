@@ -47,7 +47,7 @@ class RouteFlowsTest < ActionDispatch::IntegrationTest
     end
 
     should "test edit order by id call" do
-      get "/orders/#{@order['id']}/edit", {:status=>'cancelled'}
+      get "/orders/#{@order['id']}/edit", {:status => 'cancelled'}
       assert_equal 204, @response.status
       order = Order.find(@order['id'])
       assert order.cancelled?
@@ -55,7 +55,7 @@ class RouteFlowsTest < ActionDispatch::IntegrationTest
     end
 
     should "test update order by id call" do
-      put "/orders/#{@order['id']}", {:status=>'cancelled'}
+      put "/orders/#{@order['id']}", {:status => 'cancelled'}
       assert_equal 204, @response.status
       order = Order.find(@order['id'])
       assert order.cancelled?
@@ -69,10 +69,10 @@ class RouteFlowsTest < ActionDispatch::IntegrationTest
     end
   end
 
-    def create_order
-      post "/orders", FactoryGirl.attributes_for(:order)
-      assert_equal 201, @response.status
-      @order = JSON.parse(@response.body)["order"]
-      assert_equal 1, Order.count
-    end
+  def create_order
+    post "/orders", FactoryGirl.attributes_for(:order)
+    assert_equal 201, @response.status
+    @order = JSON.parse(@response.body)["order"]
+    assert_equal 1, Order.count
   end
+end
