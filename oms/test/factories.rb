@@ -22,4 +22,12 @@ FactoryGirl.define do
     status "created"
   end
 
+  factory :call_verification do
+    order_id { FactoryGirl.generate(:random_number) }
+    status "init"
+    reason "cod_order"
+    verification_type "cod"
+    comments "test comments"
+    created_by { "test-user-#{FactoryGirl.generate(:random_number)}" }
+  end
 end

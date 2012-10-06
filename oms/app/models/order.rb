@@ -1,6 +1,7 @@
 class Order < ActiveRecord::Base
 
   has_many :order_status_histories, :dependent => :delete_all, :autosave => true
+  has_many :call_verifications, :dependent => :delete_all, :autosave => true
 
   attr_accessible :external_id, :channel, :status, :currency, :billing_amount, :order_date, :customer_id,
                   :phone, :email_id, :address_id, :pickup_address_id, :drop_address_id, :billing_address_id, :created_by, :comments

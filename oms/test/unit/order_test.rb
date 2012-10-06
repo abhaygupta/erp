@@ -3,7 +3,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../test/test_helper.rb')
 class OrderTest < ActiveSupport::TestCase
 
   context "test order model validations" do
-
+    [:external_id, :channel, :status, :currency, :billing_amount, :order_date, :customer_id,
+     :phone, :email_id, :address_id, :pickup_address_id, :drop_address_id, :billing_address_id,
+     :created_by, :comments].each { |column| should allow_mass_assignment_of(column) }
     [:external_id, :order_date, :customer_id, :pickup_address_id, :drop_address_id, :billing_address_id].each { |column| should validate_presence_of(column) }
     [:external_id, :customer_id, :phone, :email_id, :pickup_address_id, :drop_address_id, :billing_address_id].each { |column| should ensure_length_of(column).is_at_most(100) }
     [:channel, :status, :currency].each { |column| should ensure_length_of(column).is_at_most(20) }
@@ -23,6 +25,7 @@ class OrderTest < ActiveSupport::TestCase
     end
 
     should have_many(:order_status_histories)
+    should have_many(:call_verifications)
   end
 
   context "should test state transition from created state" do

@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120930153505) do
+ActiveRecord::Schema.define(:version => 20121006084431) do
+
+  create_table "call_verifications", :force => true do |t|
+    t.integer  "order_id",          :limit => 8,                        :null => false
+    t.string   "status",            :limit => 20,   :default => "init"
+    t.string   "reason",            :limit => 100,                      :null => false
+    t.string   "verification_type", :limit => 100,                      :null => false
+    t.string   "comments",          :limit => 1000
+    t.string   "created_by",        :limit => 50
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
+  end
 
   create_table "order_sequences", :id => false, :force => true do |t|
     t.string "seq_id", :limit => 100, :null => false
