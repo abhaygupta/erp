@@ -15,19 +15,20 @@ class OrdersController < ApplicationController
   def create
     Rails.logger.info "Create order called with params : #{params}"
 
+    order = nil
     Order.transaction do
-      @order = build_order(params)
-      @order.save!
+      order = build_order(params)
+      order.save!
     end
 
-    Rails.logger.info "Order id #{@order.id} created successfully"
-    render :json => {:order => @order}.to_json, :status => 201, :location => order_path(@order)
+    Rails.logger.info "Order id #{order.id} created successfully"
+    render :json => {:order => order}.to_json, :status => 201, :location => order_path(order)
   end
 
   def show
     Rails.logger.info "Get order called with params : #{params}"
-    @order = Order.find(params[:id])
-    render :json => {:order => @order}.to_json, :status => 200
+    order = Order.find(params[:id])
+    render :json => {:order => order}.to_json, :status => 200
   end
 
   def new
@@ -37,27 +38,68 @@ class OrdersController < ApplicationController
 
   def edit
     Rails.logger.info "Edit order called with params : #{params}"
-    @order = Order.find(params[:id])
+    order = Order.find(params[:id])
     update_attributes = accept_params(params, %w(id external_id channel status customer_id phone email_id pickup_address_id drop_address_id billing_address_id))
-    Rails.logger.info "Updating attributes for order #{@order.id} , attributes : #{update_attributes}"
-    @order.update_attributes(update_attributes)
+    Rails.logger.info "Updating attributes for order #{order.id} , attributes : #{update_attributes}"
+    Order.transaction do
+      order.update_attributes(update_attributes)
+    end
     render :status => 204
   end
 
   def update
     Rails.logger.info "Update order called with params : #{params}"
-    @order = Order.find(params[:id])
+    order = Order.find(params[:id])
     update_attributes = accept_params(params, %w(id external_id channel status customer_id phone email_id pickup_address_id drop_address_id billing_address_id))
-    Rails.logger.info "Updating attributes for order #{@order.id} , attributes : #{update_attributes}"
-    @order.update_attributes(update_attributes)
+    Rails.logger.info "Updating attributes for order #{order.id} , attributes : #{update_attributes}"
+    Order.transaction do
+      order.update_attributes(update_attributes)
+    end
     render :status => 204
   end
 
   def destroy
     Rails.logger.info "Deleting order called with params : #{params}"
-    @order = Order.find(params[:id])
-    Order.delete(@order)
+    order = Order.find(params[:id])
+    Order.transaction do
+      Order.delete(order)
+    end
     render :status => 204
   end
 
+  def approve
+    Rails.logger.info "Approve order called with params : #{params}"
+    order = Order.find(params[:id])
+    Order.transaction do
+      order.approve!
+    end
+    render :status => 204
+  end
+
+  def cancel
+    Rails.logger.info "Cancel order called with params : #{params}"
+    order = Order.find(params[:id])
+    Order.transaction do
+      order.cancel!
+    end
+    render :status => 204
+  end
+
+  def hold
+    Rails.logger.info "Hold order called with params : #{params}"
+    order = Order.find(params[:id])
+    Order.transaction do
+      order.hold!
+    end
+    render :status => 204
+  end
+
+  def complete
+    Rails.logger.info "Complete order called with params : #{params}"
+    order = Order.find(params[:id])
+    Order.transaction do
+      order.complete!
+    end
+    render :status => 204
+  end
 end

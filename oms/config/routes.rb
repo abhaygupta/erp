@@ -57,4 +57,8 @@ Oms::Application.routes.draw do
   # match ':controller(/:action(/:id))(.:format)'
 
   resources :orders
+  put 'orders/:id/approve' => "orders#approve", as: "approve"
+  put 'orders/:id/cancel' => "orders#cancel", as: "cancel"
+  put 'orders/:id/hold' => "orders#hold", as: "hold"
+  put 'orders/:id/complete' => "orders#complete", as: "complete"
 end

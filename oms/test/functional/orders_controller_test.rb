@@ -118,5 +118,172 @@ class OrdersControllerTest < ActionController::TestCase
       assert_raises(ActiveRecord::RecordNotFound) { Order.find(@order['id']) }
     end
   end
+
+  context "should approve an order" do
+    setup do
+      @order = FactoryGirl.create :order
+    end
+
+    should "try approval a created order" do
+      assert @order.created?
+      put :approve, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.approved?
+    end
+
+    should "try approval a completed order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'completed'}
+      assert @order.reload.completed?
+      put :approve, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+
+    should "try approval a cancelled order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'cancelled'}
+      assert @order.reload.cancelled?
+      put :approve, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+  end
+
+  context "should cancel an order" do
+    setup do
+      @order = FactoryGirl.create :order
+    end
+
+    should "try cancel a created order" do
+      assert @order.created?
+      put :cancel, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.cancelled?
+    end
+
+    should "try cancel a completed order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'completed'}
+      assert @order.reload.completed?
+      put :cancel, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+
+    should "try cancel a approved order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'approved'}
+      assert @order.reload.approved?
+      put :cancel, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.cancelled?
+    end
+
+    should "try cancel a on_hold order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'on_hold'}
+      assert @order.reload.on_hold?
+      put :cancel, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.cancelled?
+    end
+  end
+
+  context "should put order on hold" do
+    setup do
+      @order = FactoryGirl.create :order
+    end
+
+    should "try cancel a created order" do
+      assert @order.created?
+      put :hold, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.on_hold?
+    end
+
+    should "try holding a completed order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'completed'}
+      assert @order.reload.completed?
+      put :hold, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+
+    should "try holding a approved order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'approved'}
+      assert @order.reload.approved?
+      put :hold, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.on_hold?
+    end
+
+    should "try holding a on_hold order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'on_hold'}
+      assert @order.reload.on_hold?
+      put :hold, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+  end
+
+  context "should try completing an order" do
+    setup do
+      @order = FactoryGirl.create :order
+    end
+
+    should "try completing a created order" do
+      assert @order.created?
+      put :complete, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+
+    should "try completing a completed order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'completed'}
+      assert @order.reload.completed?
+      put :hold, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+
+    should "try completing a approved order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'approved'}
+      assert @order.reload.approved?
+      put :complete, {:id=>@order['id']}
+      assert_equal 204, @response.status
+      assert @order.reload.completed?
+    end
+
+    should "try completing a cancelled order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'cancelled'}
+      assert @order.reload.cancelled?
+      put :complete, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+
+    should "try completing a on_hold order" do
+      assert @order.created?
+      get :edit, {:id=> @order['id'], :status=>'on_hold'}
+      assert @order.reload.on_hold?
+      put :complete, {:id=>@order['id']}
+      assert_equal 400, @response.status
+      assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+  end
+
+  def assert_exception_error_code(response, error_code, http_code=400, error_type='ERROR')
+    error = JSON.parse(@response.body)
+    assert_equal http_code, error["http_error_code"]
+    assert_equal error_code, error["code"]
+    assert_equal error_type, error["type"]
+  end
 end
 
