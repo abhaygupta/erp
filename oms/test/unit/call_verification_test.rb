@@ -86,8 +86,26 @@ class CallVerificationTest < ActiveSupport::TestCase
       @verification.approve!
       assert @verification.reload.approved?
       assert @order.reload.approved?
-      order_status_histories =  @order.order_status_histories
+      assert_equal 1, @order.order_status_histories.size
+    end
+
+    should "decline call verification" do
+      assert @verification.init?
+      assert @order.on_hold?
+      @verification.decline!
+      assert @verification.reload.declined?
+      assert @order.reload.cancelled?
       assert_equal 1, order_status_histories.size
+    end
+
+    should "mark call verification as pending" do
+      assert @verification.init?
+      assert @order.on_hold?
+      @verification.pending!
+      assert @verification.reload.pending?
+      assert @order.reload.on_hold?
+      assert_equal 0, order_status_histories.size
     end
   end
 end
+
