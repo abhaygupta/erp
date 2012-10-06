@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
     json_status 400, OMSError.new(400, "STATEMENT_INVALID", $!.message || "Statement invalid") if $!.kind_of?(ActiveRecord::StatementInvalid)
     json_status 400, OMSError.new(400, "JSON_PARSE_ERROR", $!.message || "JSON parsing error") if $!.kind_of?(JSON::ParserError)
     json_status 400, OMSError.new(400, "RECORD_NOT_SAVED", $!.message || "Record not saved") if $!.kind_of?(ActiveRecord::RecordNotSaved)
-    json_status 400, OMSError.new(400, "UNKOWN_ATTR", $!.message || "Unknown attribute") if $!.kind_of?(ActiveRecord::UnknownAttributeError)
+    json_status 400, OMSError.new(400, "UNKNOWN_ATTR", $!.message || "Unknown attribute") if $!.kind_of?(ActiveRecord::UnknownAttributeError)
     json_status 409, OMSError.new(409, "STALE_OBJECT", $!.message || "Stale Object") if $!.kind_of?(ActiveRecord::StaleObjectError)
     json_status 400, OMSError.new(400, "INVALID_STATE_TXN", $!.message || "Invalid State txn") if $!.kind_of?(StateMachine::InvalidTransition)
     json_status 400, OMSError.new(400, "REST_CLIENT_ERROR", $!.message || "Rest client exception") if $!.kind_of?(RestClient::Exception)
