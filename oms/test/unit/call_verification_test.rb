@@ -73,4 +73,21 @@ class CallVerificationTest < ActiveSupport::TestCase
       assert_false @verification.can_pending?
     end
   end
+
+  context "should test update order" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'on_hold')
+      @verification = FactoryGirl.create(:call_verification, order_id: @order['id'])
+    end
+
+    should "approve call verification" do
+      assert @verification.init?
+      assert @order.on_hold?
+      @verification.approve!
+      assert @verification.reload.approved?
+      assert @order.reload.approved?
+      order_status_histories =  @order.order_status_histories
+      assert_equal 1, order_status_histories.size
+    end
+  end
 end

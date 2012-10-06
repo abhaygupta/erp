@@ -112,4 +112,17 @@ class OrderTest < ActiveSupport::TestCase
       assert_equal 3, @order.order_status_histories.count
     end
   end
+
+  context "test if order is ever approved" do
+    setup do
+      @order = FactoryGirl.create(:order, status: 'created')
+    end
+
+    should "test order is ever approved" do
+      assert @order.created?
+      assert_false @order.ever_approved?
+      @order.approve!
+      assert @order.ever_approved?
+    end
+  end
 end

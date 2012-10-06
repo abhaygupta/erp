@@ -38,7 +38,7 @@ class CallVerification < ActiveRecord::Base
     end
   end
 
-  def update_order
+  def update_order(transition)
     Rails.logger.info "Updating order for call verification transition from: #{transition.try(:from)}, to: #{transition.try(:to)}"
     CallVerification.transaction do
       order.approve! if approved?

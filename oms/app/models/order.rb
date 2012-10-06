@@ -41,6 +41,10 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def ever_approved?
+    order_status_histories.where(to_status: 'approved').any?
+  end
+
   def log_state_change(from_status, to_status, event, status_time= Time.now, change_reason = nil, comments = nil)
     order_status_histories.create!(order_id: self.id, status_time: status_time, from_status: from_status,
                                    to_status: to_status, event: event, change_reason: change_reason, comments: comments, created_by: 'system')
