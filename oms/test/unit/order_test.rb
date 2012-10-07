@@ -5,8 +5,8 @@ class OrderTest < ActiveSupport::TestCase
   context "test order model validations" do
     [:external_id, :channel, :status, :currency, :billing_amount, :order_date, :customer_id,
      :phone, :email_id, :address_id, :pickup_address_id, :drop_address_id, :billing_address_id,
-     :created_by, :comments].each { |column| should allow_mass_assignment_of(column) }
-    [:external_id, :order_date, :customer_id, :pickup_address_id, :drop_address_id, :billing_address_id].each { |column| should validate_presence_of(column) }
+     :created_by, :comments, :pickup_time].each { |column| should allow_mass_assignment_of(column) }
+    [:external_id, :order_date, :customer_id, :pickup_address_id, :drop_address_id, :billing_address_id, :pickup_time].each { |column| should validate_presence_of(column) }
     [:external_id, :customer_id, :phone, :email_id, :pickup_address_id, :drop_address_id, :billing_address_id].each { |column| should ensure_length_of(column).is_at_most(100) }
     [:channel, :status, :currency].each { |column| should ensure_length_of(column).is_at_most(20) }
     should ensure_length_of(:created_by).is_at_most(50)
@@ -122,7 +122,28 @@ class OrderTest < ActiveSupport::TestCase
       assert @order.created?
       assert_false @order.ever_approved?
       @order.approve!
-      assert @order.ever_approved?
+      assert@order.ever_approved?
+    end
+  end
+
+  context "should test for duplicates detection" do
+    setup do
+      @order_1 = FactoryGirl.create(:order, status: 'approved', customer_id: 'customer-1')
+      @order_2 = FactoryGirl.create(:order, status: 'approved', customer_id: 'customer-1')
+    end
+
+    should "test for duplicates" do
+      assert_not_nil @order_1.duplicates
+      assert_equal 1, @order_1.duplicates.count
+      assert_equal [@order_2], @order_1.duplicates
+    end
+
+    should "check for duplicates" do
+      @order_1.check_duplicate
+      assert @order_1.reload.on_hold?
+      assert @order_1.order_assoc_to.present?
+      assert_equal @order_1.id, @order_1.order_assoc_to.first.to_order_id
+      assert_equal 'duplicate', @order_1.order_assoc_to.first.assoc_type
     end
   end
 end

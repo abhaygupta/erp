@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20121006114610) do
     t.string   "currency",           :limit => 20,                                 :default => "INR"
     t.decimal  "billing_amount",                     :precision => 2, :scale => 0, :default => 0
     t.datetime "order_date",                                                                              :null => false
+    t.datetime "pickup_time",                                                                             :null => false
     t.string   "customer_id",        :limit => 100,                                                       :null => false
     t.string   "phone",              :limit => 100
     t.string   "email_id",           :limit => 100

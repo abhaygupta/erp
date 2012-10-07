@@ -11,6 +11,7 @@ FactoryGirl.define do
   factory :order do
     external_id { "test-od-#{FactoryGirl.generate(:random_number)}" }
     channel "website"
+    pickup_time { FactoryGirl.generate(:cur_date) }
     order_date { FactoryGirl.generate(:cur_date) }
     created_by { "test-user-#{FactoryGirl.generate(:random_number)}" }
     currency "INR"

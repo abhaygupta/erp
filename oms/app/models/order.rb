@@ -6,9 +6,10 @@ class Order < ActiveRecord::Base
   has_many :order_assoc_from, class_name: 'OrderAssoc', :foreign_key => :from_order_id, :autosave => true
 
   attr_accessible :external_id, :channel, :status, :currency, :billing_amount, :order_date, :customer_id,
-                  :phone, :email_id, :address_id, :pickup_address_id, :drop_address_id, :billing_address_id, :created_by, :comments
+                  :phone, :email_id, :address_id, :pickup_address_id, :drop_address_id, :billing_address_id,
+                  :created_by, :comments, :pickup_time
 
-  validates_presence_of :external_id, :order_date, :customer_id, :pickup_address_id, :drop_address_id, :billing_address_id
+  validates_presence_of :external_id, :order_date, :customer_id, :pickup_address_id, :drop_address_id, :billing_address_id, :pickup_time
   validates_length_of :external_id, :customer_id, :phone, :email_id, :pickup_address_id, :drop_address_id, :billing_address_id, :maximum => 100
   validates_length_of :channel, :status, :currency, :maximum => 20
   validates_length_of :created_by, :maximum => 50, :allow_nil => true, :allow_blank => true
@@ -26,7 +27,7 @@ class Order < ActiveRecord::Base
       order.log_state_change(transition.from, transition.to, transition.event.to_s, args[:status_time] || Time.new, args[:change_reason], args[:comments])
     end
 
-    #after_transition :on => :approve, :do => :check_duplicate
+    after_transition :on => :approve, :do => :check_duplicate
 
     event :approve do
       transition [:created, :on_hold] => :approved
@@ -61,7 +62,7 @@ class Order < ActiveRecord::Base
   end
 
   def duplicates
-    Order.where(:customer_id => self.customer_id, :status => %w(approved on_hold))
+    Order.where(:customer_id => self.customer_id, :status => %w(approved on_hold)).where("id <> #{self.id}")
   end
 
   def log_state_change(from_status, to_status, event, status_time= Time.now, change_reason = nil, comments = nil)

@@ -1,7 +1,7 @@
 module OrdersHelper
 
   def build_order(params)
-    order = Order.new(accept_params(params, %w(external_id channel currency billing_amount order_date customer_id phone email_id pickup_address_id drop_address_id billing_address_id created_by comments)))
+    order = Order.new(accept_params(params, %w(external_id channel currency billing_amount order_date pickup_time customer_id phone email_id pickup_address_id drop_address_id billing_address_id created_by comments)))
     order.order_date ||= Time.now.strftime("%d-%m-%Y %H:%M:%S")
     order.external_id ||= generate_external_id
     order.order_status_histories << build_order_status_history(order)

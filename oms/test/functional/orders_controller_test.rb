@@ -5,6 +5,8 @@ class OrdersControllerTest < ActionController::TestCase
   def setup
     Order.delete_all
     OrderStatusHistory.delete_all
+    CallVerification.delete_all
+    OrderAssoc.delete_all
   end
 
   context "search order test" do
