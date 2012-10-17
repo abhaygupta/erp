@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121006114610) do
+ActiveRecord::Schema.define(:version => 20121016061839) do
 
   create_table "call_verifications", :force => true do |t|
     t.integer  "order_id",          :limit => 8,                        :null => false
@@ -67,6 +67,29 @@ ActiveRecord::Schema.define(:version => 20121006114610) do
     t.string   "comments",           :limit => 1000
     t.datetime "created_at",                                                                              :null => false
     t.datetime "updated_at",                                                                              :null => false
+  end
+
+  create_table "payments", :force => true do |t|
+    t.integer  "order_id",        :limit => 8,                                                         :null => false
+    t.string   "currency",        :limit => 20,                                 :default => "INR"
+    t.string   "status",          :limit => 20,                                 :default => "init"
+    t.string   "payment_method",  :limit => 20,                                                        :null => false
+    t.string   "payment_type",    :limit => 20,                                                        :null => false
+    t.string   "channel",         :limit => 50
+    t.string   "gateway",         :limit => 50
+    t.string   "terminal",        :limit => 50
+    t.string   "ref_num",         :limit => 50
+    t.datetime "payment_date",                                                                         :null => false
+    t.string   "external_id",     :limit => 50
+    t.boolean  "fraud",                                                         :default => false
+    t.string   "party_id_to",     :limit => 100,                                                       :null => false
+    t.string   "party_id_from",   :limit => 100,                                                       :null => false
+    t.decimal  "paid_amount",                     :precision => 2, :scale => 0, :default => 0
+    t.decimal  "promised_amount",                 :precision => 2, :scale => 0, :default => 0
+    t.string   "comments",        :limit => 1000
+    t.string   "created_by",      :limit => 50,                                 :default => "website"
+    t.datetime "created_at",                                                                           :null => false
+    t.datetime "updated_at",                                                                           :null => false
   end
 
 end

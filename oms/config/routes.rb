@@ -61,4 +61,5 @@ Oms::Application.routes.draw do
   put 'orders/:id/cancel' => "orders#cancel", as: "cancel"
   put 'orders/:id/hold' => "orders#hold", as: "hold"
   put 'orders/:id/complete' => "orders#complete", as: "complete"
+  put 'orders/:id/address_change' => "orders#address_change", as: "address_change"
 end

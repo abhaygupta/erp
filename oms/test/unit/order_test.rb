@@ -11,6 +11,7 @@ class OrderTest < ActiveSupport::TestCase
     [:channel, :status, :currency].each { |column| should ensure_length_of(column).is_at_most(20) }
     should ensure_length_of(:created_by).is_at_most(50)
     should ensure_length_of(:comments).is_at_most(1000)
+    should validate_numericality_of(:billing_amount)
 
     %w(created on_hold approved cancelled completed).each do |value|
       should allow_value(value).for(:status)
@@ -146,4 +147,17 @@ class OrderTest < ActiveSupport::TestCase
       assert_equal 'duplicate', @order_1.order_assoc_to.first.assoc_type
     end
   end
+
+  context "should test address change" do
+    setup do
+      @order = FactoryGirl.create(:order)
+    end
+
+    should "test change pickup and drop address" do
+      @order.change_address({:pickup_address_id=>  "TEST-PICK-UP-ADD", :drop_address_id=> "TEST-DROP-ADD"})
+      assert_equal "TEST-PICK-UP-ADD", @order.reload.pickup_address_id
+      assert_equal "TEST-DROP-ADD", @order.drop_address_id
+    end
+  end
+
 end

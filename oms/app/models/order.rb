@@ -14,6 +14,7 @@ class Order < ActiveRecord::Base
   validates_length_of :channel, :status, :currency, :maximum => 20
   validates_length_of :created_by, :maximum => 50, :allow_nil => true, :allow_blank => true
   validates_length_of :comments, :maximum => 1000
+  validates_numericality_of :billing_amount, :greater_than_or_equal_to => 0
 
   validates_inclusion_of :channel, :in => %w(website mobile email), :allow_nil => true, :allow_blank => true
   validates_inclusion_of :status, :in => %w(created on_hold approved cancelled completed), :allow_nil => true, :allow_blank => true
@@ -51,11 +52,15 @@ class Order < ActiveRecord::Base
   end
 
   def check_duplicate
+    Rails.logger.info "Checking for duplicates for order: #{self.id}"
+
     duplicate_orders = duplicates
+
     if duplicate_orders.present?
+      Rails.logger.info "Duplicates : #{duplicate_orders.collect(&:id)} found for order: #{self.id}"
       Order.transaction do
         hold!({:change_reason => 'duplicate', :comments => "Order duplicate for following orders #{duplicate_orders.collect(&:id).join(",")}"})
-        duplicate_orders.each {|order| self.order_assoc_to << OrderAssoc.new(:from_order_id => order.id, :assoc_type => 'duplicate')}
+        duplicate_orders.each { |order| self.order_assoc_to << OrderAssoc.new(:from_order_id => order.id, :assoc_type => 'duplicate') }
         save!
       end
     end
@@ -63,6 +68,10 @@ class Order < ActiveRecord::Base
 
   def duplicates
     Order.where(:customer_id => self.customer_id, :status => %w(approved on_hold)).where("id <> #{self.id}")
+  end
+
+  def change_address(args)
+    update_attributes(args)
   end
 
   def log_state_change(from_status, to_status, event, status_time= Time.now, change_reason = nil, comments = nil)

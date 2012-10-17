@@ -102,4 +102,15 @@ class OrdersController < ApplicationController
     end
     render :status => 204
   end
+
+  def address_change
+    Rails.logger.info "Address change called for order with params : #{params}"
+    order = Order.find(params[:id])
+    address_attributes = accept_params(params, %w(pickup_address_id drop_address_id))
+    return json_status 400, OMSError.new(400, "INVALID_REQUEST", "Invalid address change request or order state") if address_attributes.blank? || (order.completed? || order.cancelled?)
+    Order.transaction do
+      order.change_address(address_attributes)
+    end
+    render :status => 204
+  end
 end

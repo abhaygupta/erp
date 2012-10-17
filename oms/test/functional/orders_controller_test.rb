@@ -59,7 +59,7 @@ class OrdersControllerTest < ActionController::TestCase
     end
 
     should "test search order by id fails" do
-      get :show, {:id=>"0000000000"}
+      get :show, {:id => "0000000000"}
       assert_equal 404, @response.status
     end
   end
@@ -85,7 +85,7 @@ class OrdersControllerTest < ActionController::TestCase
     end
 
     should "update some attributes" do
-      get :edit, {:id=> @order['id'], :status=>'completed'}
+      get :edit, {:id => @order['id'], :status => 'completed'}
       assert_equal 204, @response.status
       assert Order.find(@order['id']).completed?
     end
@@ -100,7 +100,7 @@ class OrdersControllerTest < ActionController::TestCase
     end
 
     should "update some attributes" do
-      put :update, {:id=> @order['id'], :status=>'completed'}
+      put :update, {:id => @order['id'], :status => 'completed'}
       assert_equal 204, @response.status
       assert Order.find(@order['id']).completed?
     end
@@ -115,7 +115,7 @@ class OrdersControllerTest < ActionController::TestCase
     end
 
     should "delete order" do
-      delete :destroy, {:id=> @order['id']}
+      delete :destroy, {:id => @order['id']}
       assert_equal 204, @response.status
       assert_raises(ActiveRecord::RecordNotFound) { Order.find(@order['id']) }
     end
@@ -128,25 +128,25 @@ class OrdersControllerTest < ActionController::TestCase
 
     should "try approval a created order" do
       assert @order.created?
-      put :approve, {:id=>@order['id']}
+      put :approve, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.approved?
     end
 
     should "try approval a completed order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'completed'}
+      get :edit, {:id => @order['id'], :status => 'completed'}
       assert @order.reload.completed?
-      put :approve, {:id=>@order['id']}
+      put :approve, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
 
     should "try approval a cancelled order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'cancelled'}
+      get :edit, {:id => @order['id'], :status => 'cancelled'}
       assert @order.reload.cancelled?
-      put :approve, {:id=>@order['id']}
+      put :approve, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
@@ -159,34 +159,34 @@ class OrdersControllerTest < ActionController::TestCase
 
     should "try cancel a created order" do
       assert @order.created?
-      put :cancel, {:id=>@order['id']}
+      put :cancel, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.cancelled?
     end
 
     should "try cancel a completed order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'completed'}
+      get :edit, {:id => @order['id'], :status => 'completed'}
       assert @order.reload.completed?
-      put :cancel, {:id=>@order['id']}
+      put :cancel, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
 
     should "try cancel a approved order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'approved'}
+      get :edit, {:id => @order['id'], :status => 'approved'}
       assert @order.reload.approved?
-      put :cancel, {:id=>@order['id']}
+      put :cancel, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.cancelled?
     end
 
     should "try cancel a on_hold order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'on_hold'}
+      get :edit, {:id => @order['id'], :status => 'on_hold'}
       assert @order.reload.on_hold?
-      put :cancel, {:id=>@order['id']}
+      put :cancel, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.cancelled?
     end
@@ -199,34 +199,34 @@ class OrdersControllerTest < ActionController::TestCase
 
     should "try cancel a created order" do
       assert @order.created?
-      put :hold, {:id=>@order['id']}
+      put :hold, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.on_hold?
     end
 
     should "try holding a completed order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'completed'}
+      get :edit, {:id => @order['id'], :status => 'completed'}
       assert @order.reload.completed?
-      put :hold, {:id=>@order['id']}
+      put :hold, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
 
     should "try holding a approved order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'approved'}
+      get :edit, {:id => @order['id'], :status => 'approved'}
       assert @order.reload.approved?
-      put :hold, {:id=>@order['id']}
+      put :hold, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.on_hold?
     end
 
     should "try holding a on_hold order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'on_hold'}
+      get :edit, {:id => @order['id'], :status => 'on_hold'}
       assert @order.reload.on_hold?
-      put :hold, {:id=>@order['id']}
+      put :hold, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
@@ -239,45 +239,63 @@ class OrdersControllerTest < ActionController::TestCase
 
     should "try completing a created order" do
       assert @order.created?
-      put :complete, {:id=>@order['id']}
+      put :complete, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
 
     should "try completing a completed order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'completed'}
+      get :edit, {:id => @order['id'], :status => 'completed'}
       assert @order.reload.completed?
-      put :hold, {:id=>@order['id']}
+      put :hold, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
 
     should "try completing a approved order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'approved'}
+      get :edit, {:id => @order['id'], :status => 'approved'}
       assert @order.reload.approved?
-      put :complete, {:id=>@order['id']}
+      put :complete, {:id => @order['id']}
       assert_equal 204, @response.status
       assert @order.reload.completed?
     end
 
     should "try completing a cancelled order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'cancelled'}
+      get :edit, {:id => @order['id'], :status => 'cancelled'}
       assert @order.reload.cancelled?
-      put :complete, {:id=>@order['id']}
+      put :complete, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
     end
 
     should "try completing a on_hold order" do
       assert @order.created?
-      get :edit, {:id=> @order['id'], :status=>'on_hold'}
+      get :edit, {:id => @order['id'], :status => 'on_hold'}
       assert @order.reload.on_hold?
-      put :complete, {:id=>@order['id']}
+      put :complete, {:id => @order['id']}
       assert_equal 400, @response.status
       assert_exception_error_code(@response, "INVALID_STATE_TXN")
+    end
+  end
+
+  context "should change address for an order" do
+
+    context "should change address for a created order" do
+
+      setup do
+        @order = FactoryGirl.create :order, status: 'created'
+      end
+
+      should "try approval a created order" do
+        assert @order.created?
+        put :address_change, {:pickup_address_id => "TEST-PICK-UP-ADD", :drop_address_id => "TEST-DROP-ADD"}
+        assert_equal 204, @response.status
+        assert_equal "TEST-PICK-UP-ADD", @order.reload.pickup_address_id
+        assert_equal "TEST-DROP-ADD", @order.drop_address_id
+      end
     end
   end
 
